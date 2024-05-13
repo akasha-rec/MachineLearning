@@ -1,0 +1,62 @@
+240513
+
+https://github.com/e9t/nsmc
+n-gram으로 감정 분석(web에서 작동하게)
+FLASK(관례)
+- app.py
+- static / templates 같은 폴더 이름 바꾸지 말기
+
+flask run --debug
+
+senti : get / post 모두 처리해야
+static : 사용자에게 전송해야 하는 값 / templates : 변형된 html {% %} 이외에는 고정이고, 변경 가능
+
+보통은 Controller가 커지는 것을 방지하기 위해 Service로 뺀다
+
+NLP 기반 데이터 분석 및 머신러닝/딥러닝 모델
+1. AI hub, 공공정보데이터 >> 데이터 전처리(labeling) : label이 없으면 내가 labeling을 해야 한다.
+2. 한국어 처리를 위한 준비
+- 불용어 처리(용어 리스트) / 단어 뭉치(세종 코퍼스)
+- 토큰 분리기(nlp mecab < 리눅스 / KoNLP)
+-------------------------------------------------------------
+# 네이버 영화 댓글을 활용한 감정 분석
+1. 데이터를 기반으로 지도 알고리즘을 선별(제일 빠른 것)
+2. NLP 특성상 토큰 분리에 대한 기준을 설정(Okt, nGram)
+3. 모델 #1 학습(dump) - pkl 파일로 모델을 만들었다.
+
+## 모델 로드 후 테스트
+1. pkl(직렬화 파일) 불러오기 > pkl 이해하는 애가 필요(sklearn - joblib)
+2. 전처리 과정을 그대로 복제
+3. 이후 추론
+
+
+txt 파일은 편향이 없으니까 column 수가 안 맞을 경우 그냥 drop 시켜라
+
+우편번호, 전화번호, 이메일 주소를 정규 표현식 이용해서 할 수 있어야
+
+가능하면 축약 리스트 활용
+가능하면 for를 쓰지 않는 방향으로 진행
+: 행에 한 방에 적용 > apply / 열에 적용 > list comprehensive + 정규 표현식(import re)
+
+terminal > pip install konlpy (java는 아무 상관X / 0.6.0 이상이어야 함) >> from konlpy.tag import Okt
+
+희소행렬 > 학습★
+
+★ 선형 모델 먼저(45분) > RandomForest 사용(90분) : 감정 분석이든 텍스트 분석이든
+LinearRegression : 희소행렬 > 모델 입력
+naive bayes : 희소행렬 > 모델 입력
+- SVM 보다 나은 점 : 분류에 필요한 파라미터를 추정하기 위한 트레이닝 데이터의 양이 매우 적다
+
+자바에서 안 되는 전처리가 나오기 시작 > 정규표현식(java/javascript/python 모두에서 돌아가)
+
+1. pkl 파일 + 역직렬화
+2. 화면에 그려지는지 간단하게 확인
+3. web code freeze > 학습+전처리 반복 > pkl을 엎어쓰기?
+
+create table dblog (
+id int auto_increment primary key,
+method varchar(10) not null,
+sqlstring varchar(256) not null,
+regidate date default current_timestamp not null,
+success boolean default true
+)
